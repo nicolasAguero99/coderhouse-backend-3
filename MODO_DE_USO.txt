@@ -1,6 +1,6 @@
 === MODO DE USO ===
 
-⚠️ Para poder usar la DB de Mongo, las credenciales ya vienen proporcionadas en el archivo ".env" y con la configuración de "permitir todas las IP (0.0.0.0/0 - includes your current IP address)" en Mongo.
+⚠️ Para poder usar la DB de Mongo, las credenciales se proporcionan por mensaje de la plataforma de entrega de coderhouse. En Mongo, está activa la configuración de "permitir todas las IP (0.0.0.0/0 - includes your current IP address)".
 
 La DB de Mongo ya viene con datos guardados a modo de ejemplos de como se guardan dichos datos.
 
