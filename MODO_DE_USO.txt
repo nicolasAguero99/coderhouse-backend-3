@@ -1,0 +1,51 @@
+=== MODO DE USO ===
+
+⚠️ Para poder usar la DB de Mongo, las credenciales ya vienen proporcionadas en el archivo ".env" y con la configuración de "permitir todas las IP (0.0.0.0/0 - includes your current IP address)" en Mongo.
+
+La DB de Mongo ya viene con datos guardados a modo de ejemplos de como se guardan dichos datos.
+
+📦 Para instalar dependecias primero ejecutar:
+npm i
+
+⚙️ Para ejecutar el servidor:
+- En modo desarrollo
+npm run dev
+
+- En modo producción:
+npm run start
+
+---------------------
+
+Endpoints a ejecutar:
+
+=====
+
+GET - http://localhost:3000/api/mocks/mockingusers 
+
+Traerá 50 usuarios mockeados con la librería Faker.js, con el formato de MongoDB.
+
+=====
+
+POST - http://localhost:3000/api/mocks/generateData?users={cantidad_de_users}pets={cantidad_de_pets} 
+
+Se creará y se guardará en MongoDB la cantidad de usuarios asignadas en los "query params". Con un array de pets proporcional al número de "cantidad de pets", para cada usuario.
+
+=====
+
+GET - http://localhost:3000/api/loggerTest
+
+Mostrará un mensaje a modo informativo para saber si se ejecutaron los mocks los logs correctamente. Estos logs se mostrarán por la terminal, y si ejecutas el servidor en modo "Producción", veras los logs en un archivo "logs.log".
+
+=====
+
+GET - http://localhost:3000/api/usersDB
+
+Mostrará los users guardados en MongoDB.
+
+=====
+
+GET - http://localhost:3000/api/petsDB
+
+Mostrará los pets guardados en MongoDB.
+
+=====
