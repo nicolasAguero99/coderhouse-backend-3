@@ -1,52 +1,195 @@
-Entrega N°1
-Se debe entregar
-Crear un router llamado mocks.router.js que funcione bajo la ruta base /api/mocks.
+# Entrega Final - Proyecto Dockerizado
 
-Mover el endpoint “/mockingpets” (Desarrollado en el primer Desafío Entregable) dentro de este router.
+Este proyecto corresponde a la entrega final del curso **Backend III: Testing y Escalabilidad Backend** de CoderHouse.  
+Incluye documentación con Swagger, tests funcionales y la dockerización completa de la aplicación.
 
-Crear un módulo de Mocking para generar usuarios de acuerdo a un parámetro numérico. Dichos usuarios generados deberán tener las siguientes características:
+---
 
-En “password” debe tener la contraseña “coder123” encriptada.
+## 🐳 Imagen en Docker Hub
 
-“role” puede variar entre “user” y “admin”.
+La imagen del proyecto se encuentra publicada en Docker Hub:
 
-“pets” debe ir como array vacío.
+👉 https://hub.docker.com/r/nicoagueroo99/entrega-final-coder
 
-Dentro del router mocks.router.js, utilizar este módulo en un endpoint GET llamado “/mockingusers”, y generar 50 usuarios con el mismo formato que entregaría una petición de Mongo.
+---
 
-Dentro del router mocks.router.js, desarrollar un endpoint POST llamado /generateData que reciba los parámetros numéricos “users” y “pets” para generar e insertar en la base de datos la cantidad de registros indicados.
+## 🚀 Cómo ejecutar el proyecto con Docker
 
-Comprobar dichos registros insertados mediante los servicios GET de users y pets
+### 1️⃣ Descargar la imagen
 
-Criterios
-Creación del Router Mocks y Migración de Endpoints:
+```bash
+docker pull nicoagueroo99/entrega-final-coder:latest
+```
 
-Se crea el router mocks.router.js bajo la ruta base /api/mocks y se migra con éxito el endpoint /mockingpets al nuevo router.
+### 2️⃣ Ejecutar el contenedor
 
-El router mocks.router.js se crea correctamente.
+```bash
+docker run -p 3000:3000 nicoagueroo99/entrega-final-coder
+```
 
-El endpoint /mockingpets se mueve al nuevo router sin errores en su funcionalidad.
+### 3️⃣ Acceder a la aplicación
 
-Desarrollo del Módulo de Mocking para Generación de Usuarios:
+- API: 👉 http://localhost:3000
+- Documentación Swagger (módulo Users): 👉 http://localhost:3000/api/docs
 
-Descripción: Se desarrolla un módulo de Mocking que genera usuarios según un parámetro numérico con las características especificadas.
+---
 
-Se genera correctamente un número específico de usuarios con contraseñas encriptadas, roles variados y arrays de pets vacíos.
+## 🧪 Tests funcionales
 
-Los usuarios generados cumplen con el formato esperado de una petición de Mongo.
+Se desarrollaron tests funcionales completos para todos los endpoints del router:
 
-Implementación de Endpoint GET para Generación de Usuarios:
+- `adoption.router.js`
 
-Descripción: Se implementa un endpoint GET /mockingusers en el router mocks.router.js para generar usuarios según un parámetro numérico.
+Los tests cubren:
 
-El endpoint GET /mockingusers utiliza el módulo de Mocking para generar y devolver la cantidad específica de usuarios solicitados.
+- Casos de éxito
+- Casos de error
+- Validación de respuestas y códigos de estado HTTP
 
-Los usuarios generados siguen el formato esperado y son devueltos correctamente por el endpoint.
+---
 
-Desarrollo del Endpoint POST para Generar e Insertar Datos en la Base de Datos:
+## 📦 Dockerfile
 
-Descripción: Se desarrolla un endpoint POST /generateData en el router mocks.router.js para generar e insertar registros en la base de datos según parámetros numéricos.
+El proyecto cuenta con un Dockerfile que:
 
-El endpoint POST /generateData recibe correctamente los parámetros users y pets, genera la cantidad de registros indicada y los inserta en la base de datos.
+- Utiliza Node.js 20 (LTS)
+- Instala las dependencias necesarias
+- Copia el código fuente del proyecto
+- Ejecuta la aplicación en modo producción
 
-Se comprueba la inserción de registros mediante los servicios GET de users y pets, asegurando que los registros generados estén disponibles y sean accesibles.
+---
+
+## 🛠️ Tecnologías utilizadas
+
+- Node.js
+- Express
+- MongoDB
+- Docker
+- Swagger
+- Mocha / Chai
+
+---
+
+## 👤 Autor
+
+Entrega realizada por Nicolás Agüero
+
+---
+
+=== MODO DE USO ===
+
+⚠️ Para poder usar la DB de Mongo, las credenciales se proporcionan por mensaje de la plataforma de entrega de coderhouse. En Mongo, está activa la configuración de "permitir todas las IP (0.0.0.0/0 - includes your current IP address)".
+
+La DB de Mongo ya viene con datos guardados a modo de ejemplos de como se guardan dichos datos.
+
+📦 Para instalar dependecias primero ejecutar:
+npm i
+
+⚙️ Para ejecutar el servidor:
+- En modo desarrollo
+npm run dev
+
+- En modo producción:
+npm run start
+
+---------------------
+
+Endpoints a ejecutar:
+
+=====
+
+GET - http://localhost:3000/api/mocks/mockingusers 
+
+Traerá 50 usuarios mockeados con la librería Faker.js, con el formato de MongoDB.
+
+=====
+
+POST - http://localhost:3000/api/mocks/generateData?users={cantidad_de_users}&pets={cantidad_de_pets} 
+
+Se creará y se guardará en MongoDB la cantidad de usuarios asignadas en los "query params". Con un array de pets proporcional al número de "cantidad de pets", para cada usuario.
+
+=====
+
+POST - http://localhost:3000/api/mocks/generatePetsToBeAdopted
+
+Generará mascotas sin "owner", para poder ser adoptadas.
+
+=====
+
+GET - http://localhost:3000/api/loggerTest
+
+Mostrará un mensaje a modo informativo para saber si se ejecutaron los mocks los logs correctamente. Estos logs se mostrarán por la terminal, y si ejecutas el servidor en modo "Producción", veras los logs en un archivo "logs.log".
+
+=====
+
+GET - http://localhost:3000/api/usersDB
+
+Mostrará los users guardados en MongoDB.
+
+=====
+
+GET - http://localhost:3000/api/usersDB/{uid}
+
+Mostrará un usuario específico según su ID. Reemplazar {uid} con el ID del usuario.
+
+=====
+
+POST - http://localhost:3000/api/usersDB/{uid}/documents
+
+Permite subir hasta 2 archivos como documentos del usuario. Reemplazar {uid} con el ID del usuario.
+El body debe ser de tipo multipart/form-data con el campo "files" conteniendo los archivos a subir.
+Si es una imagen se guardará en /uploads/pets.
+Y si es un documento se guardará en /uploads/documents.
+
+=====
+
+GET - http://localhost:3000/api/petsDB
+
+Mostrará los pets guardados en MongoDB.
+
+?adopted=true -> Mostrará mascotas con dueño
+?adopted=false -> Mostrará mascotas sin dueño
+
+=====
+
+GET - http://localhost:3000/api/petsDB/{uid}
+
+Mostrará una mascota específica según su ID. Reemplazar {uid} con el ID de la mascota.
+
+=====
+
+POST - http://localhost:3000/api/sessions/register
+
+Registra un nuevo usuario en el sistema. El body debe ser JSON con:
+{
+  "name": "Nombre del usuario",
+  "email": "email@example.com",
+  "password": "contraseña"
+}
+
+=====
+
+POST - http://localhost:3000/api/sessions/login
+
+Inicia sesión con un usuario existente. El body debe ser JSON con:
+{
+  "email": "email@example.com",
+  "password": "contraseña"
+}
+
+Retornará un mensaje de bienvenida, las mascotas del usuario y la información del usuario.
+
+=====
+
+GET - http://localhost:3000/api/adoption
+
+Mostrará todas las adopciones realizadas en el sistema, con el nombre del usuario y las mascotas adoptadas.
+
+=====
+
+POST - http://localhost:3000/api/adoption/{uid}/{pid}
+
+Crea una nueva adopción asociando una mascota a un usuario. Reemplazar {uid} con el ID del usuario y {pid} con el ID de la mascota.
+La mascota debe estar disponible (sin dueño) y el usuario no debe tenerla ya adoptada.
+
+=====

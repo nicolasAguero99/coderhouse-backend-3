@@ -1,9 +1,16 @@
-export const BASE_URL_API = "/api/";
+export const BASE_URL_API = "/api";
 export const LOGGER_TEST_BASE_URL = `/loggerTest`;
-
-export const BASE_URL_MOCKS = `${BASE_URL_API}mocks/`;
+export const HEALTH_BASE_URL = `/`;
+export const BASE_URL_MOCKS = `${BASE_URL_API}/mocks`;
 export const PETS_BASE_URL = `/mockingpets`;
 export const USERS_BASE_URL = `/mockingusers`;
 export const USERS_DB_BASE_URL = `/usersDB`;
 export const PETS_DB_BASE_URL = `/petsDB`;
+export const DOCUMENTS_DB_BASE_URL = `/documents`;
 export const MOCKING_GENERATE_DATA_BASE_URL = `/generateData`;
+export const PETS_TO_BE_ADOPTED_BASE_URL = `/generatePetsToBeAdopted`;
+export const ADOPTION_BASE_URL = `/adoption`;
+export const API_DOCS_PATH = `/api-docs`;
+export const SESSIONS_BASE_URL = `/sessions`;
+export const REGISTER_BASE_URL = `/register`;
+export const LOGIN_BASE_URL = `/login`;

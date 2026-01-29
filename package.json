@@ -4,9 +4,9 @@
   "description": "Entrega N°1 Se debe entregar Crear un router llamado mocks.router.js que funcione bajo la ruta base /api/mocks.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js --dev",
-    "start": "node index.js --prod"
+    "test": "mocha test/**/*.test.js --timeout 10000",
+    "dev": "nodemon server.js --dev",
+    "start": "node server.js --prod"
   },
   "keywords": [],
   "author": "",
@@ -17,14 +17,19 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "mongoose": "^9.0.1",
+    "multer": "^2.0.2",
+    "swagger-ui-express": "^5.0.1",
     "winston": "^3.19.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@faker-js/faker": "^10.1.0",
+    "chai": "^6.2.2",
     "eslint": "^9.39.1",
     "globals": "^16.5.0",
+    "mocha": "^11.7.5",
     "morgan": "^1.10.1",
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.11",
+    "supertest": "^7.2.2"
   }
 }

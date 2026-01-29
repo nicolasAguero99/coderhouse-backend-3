@@ -1,0 +1,1009 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Pets API",
+    "version": "1.0.0",
+    "description": "API para gestión de usuarios y mascotas. Incluye endpoints para obtener datos de la base de datos, generar datos mock, autenticación de usuarios y sistema de adopciones.",
+    "contact": {
+      "name": "API Support"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Servidor de desarrollo"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Users",
+      "description": "Endpoints relacionados con usuarios"
+    },
+    {
+      "name": "Pets",
+      "description": "Endpoints relacionados con mascotas"
+    },
+    {
+      "name": "Sessions",
+      "description": "Endpoints para autenticación y registro de usuarios"
+    },
+    {
+      "name": "Adoption",
+      "description": "Endpoints relacionados con el sistema de adopciones"
+    },
+    {
+      "name": "Mocks",
+      "description": "Endpoints para generar datos mock"
+    },
+    {
+      "name": "Logger",
+      "description": "Endpoints para testing de logger"
+    }
+  ],
+  "paths": {
+    "/api/usersDB": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Obtener todos los usuarios de la base de datos",
+        "description": "Retorna una lista de todos los usuarios almacenados en la base de datos",
+        "operationId": "getUsersDB",
+        "responses": {
+          "200": {
+            "description": "Lista de usuarios obtenida exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                },
+                "example": [
+                  {
+                    "_id": "507f1f77bcf86cd799439011",
+                    "name": "Juan Pérez",
+                    "email": "juan@example.com",
+                    "role": "user",
+                    "pets": ["507f1f77bcf86cd799439012", "507f1f77bcf86cd799439013"],
+                    "password": "$2b$10$hashedpassword",
+                    "documents": [],
+                    "last_connection": "2024-01-01T00:00:00.000Z",
+                    "createdAt": "2024-01-01T00:00:00.000Z",
+                    "updatedAt": "2024-01-01T00:00:00.000Z"
+                  }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Error al obtener los usuarios",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/usersDB/{uid}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Obtener un usuario por ID",
+        "description": "Retorna la información de un usuario específico según su ID",
+        "operationId": "getUser",
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "description": "ID único del usuario",
+            "schema": {
+              "type": "string"
+            },
+            "example": "507f1f77bcf86cd799439011"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuario obtenido exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuario no encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al obtener el usuario",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/usersDB/{uid}/documents": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Subir documentos de usuario",
+        "description": "Permite subir hasta 2 archivos como documentos del usuario. Los archivos se guardan en el servidor y se asocian al usuario.",
+        "operationId": "uploadUserDocuments",
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "description": "ID único del usuario",
+            "schema": {
+              "type": "string"
+            },
+            "example": "507f1f77bcf86cd799439011"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "description": "Archivos a subir (máximo 2)",
+                    "maxItems": 2
+                  }
+                },
+                "required": ["files"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Documentos subidos exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error de validación (usuario no encontrado o archivos no proporcionados)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuario no encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al subir los documentos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/petsDB": {
+      "get": {
+        "tags": ["Pets"],
+        "summary": "Obtener todas las mascotas de la base de datos",
+        "description": "Retorna una lista de todas las mascotas almacenadas en la base de datos. Puede filtrarse por estado de adopción.",
+        "operationId": "getPetsDB",
+        "parameters": [
+          {
+            "name": "adopted",
+            "in": "query",
+            "required": false,
+            "description": "Filtrar mascotas por estado de adopción (true para adoptadas, false para disponibles)",
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            },
+            "example": "false"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de mascotas obtenida exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pet"
+                  }
+                },
+                "example": [
+                  {
+                    "_id": "507f1f77bcf86cd799439012",
+                    "name": "Max",
+                    "owner": "507f1f77bcf86cd799439011",
+                    "createdAt": "2024-01-01T00:00:00.000Z",
+                    "updatedAt": "2024-01-01T00:00:00.000Z"
+                  },
+                  {
+                    "_id": "507f1f77bcf86cd799439013",
+                    "name": "Luna",
+                    "owner": null,
+                    "createdAt": "2024-01-01T00:00:00.000Z",
+                    "updatedAt": "2024-01-01T00:00:00.000Z"
+                  }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "Error al obtener las mascotas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/petsDB/{uid}": {
+      "get": {
+        "tags": ["Pets"],
+        "summary": "Obtener una mascota por ID",
+        "description": "Retorna la información de una mascota específica según su ID",
+        "operationId": "getPet",
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "description": "ID único de la mascota",
+            "schema": {
+              "type": "string"
+            },
+            "example": "507f1f77bcf86cd799439012"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mascota obtenida exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Mascota no encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al obtener la mascota",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sessions/register": {
+      "post": {
+        "tags": ["Sessions"],
+        "summary": "Registrar un nuevo usuario",
+        "description": "Crea un nuevo usuario en el sistema con nombre, email y contraseña",
+        "operationId": "registerUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              },
+              "example": {
+                "name": "Juan Pérez",
+                "email": "juan@example.com",
+                "password": "password123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario registrado exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error de validación (email duplicado o datos inválidos)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al registrar el usuario",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sessions/login": {
+      "post": {
+        "tags": ["Sessions"],
+        "summary": "Iniciar sesión",
+        "description": "Autentica un usuario con email y contraseña. Retorna información del usuario y sus mascotas.",
+        "operationId": "loginUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              },
+              "example": {
+                "email": "juan@example.com",
+                "password": "password123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login exitoso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Hi Juan Pérez! Welcome back"
+                    },
+                    "myPets": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Pet"
+                      }
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Credenciales inválidas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuario no encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al iniciar sesión",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/adoption": {
+      "get": {
+        "tags": ["Adoption"],
+        "summary": "Obtener todas las adopciones",
+        "description": "Retorna una lista de todas las adopciones realizadas en el sistema",
+        "operationId": "getAllAdoptions",
+        "responses": {
+          "200": {
+            "description": "Lista de adopciones obtenida exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "adoptions": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Adoption"
+                      }
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                },
+                "example": {
+                  "adoptions": [
+                    {
+                      "user": "Juan Pérez",
+                      "pet": ["Max", "Luna"]
+                    }
+                  ],
+                  "success": true
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al obtener las adopciones",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/adoption/{uid}/{pid}": {
+      "post": {
+        "tags": ["Adoption"],
+        "summary": "Crear una adopción",
+        "description": "Crea una nueva adopción asociando una mascota a un usuario. La mascota debe estar disponible (sin dueño) y el usuario no debe tenerla ya adoptada.",
+        "operationId": "createAdoption",
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "description": "ID único del usuario que adopta",
+            "schema": {
+              "type": "string"
+            },
+            "example": "507f1f77bcf86cd799439011"
+          },
+          {
+            "name": "pid",
+            "in": "path",
+            "required": true,
+            "description": "ID único de la mascota a adoptar",
+            "schema": {
+              "type": "string"
+            },
+            "example": "507f1f77bcf86cd799439012"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Adopción creada exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "adoptionMsg": {
+                      "type": "string",
+                      "example": "Adoption created successfully for user Juan Pérez and pet Max"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error de validación (mascota ya adoptada, usuario ya tiene la mascota, o datos inválidos)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuario o mascota no encontrados",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al crear la adopción",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/loggerTest": {
+      "get": {
+        "tags": ["Logger"],
+        "summary": "Probar el sistema de logging",
+        "description": "Genera mensajes de log en todos los niveles (debug, http, info, warning, error, fatal) para testing",
+        "operationId": "loggerTest",
+        "responses": {
+          "200": {
+            "description": "Logs generados exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Logs were generated, check console"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al generar logs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mocks/mockingusers": {
+      "get": {
+        "tags": ["Mocks"],
+        "summary": "Obtener usuarios mock",
+        "description": "Retorna una lista de 50 usuarios generados con datos mock (no se guardan en la base de datos)",
+        "operationId": "getMockUsers",
+        "responses": {
+          "200": {
+            "description": "Lista de usuarios mock obtenida exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al obtener los usuarios mock",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mocks/generateData": {
+      "post": {
+        "tags": ["Mocks"],
+        "summary": "Generar usuarios y mascotas en la base de datos",
+        "description": "Crea usuarios y mascotas mock en la base de datos. Los usuarios se crean con mascotas asociadas.",
+        "operationId": "generateData",
+        "parameters": [
+          {
+            "name": "users",
+            "in": "query",
+            "required": true,
+            "description": "Número de usuarios a crear (debe ser mayor a 0)",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "example": 10
+          },
+          {
+            "name": "pets",
+            "in": "query",
+            "required": true,
+            "description": "Número de mascotas por usuario (debe ser mayor a 0)",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "example": 2
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Usuarios y mascotas creados exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error de validación en los parámetros",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "usersInvalid": {
+                    "value": {
+                      "message": "Users must be greater than 0"
+                    }
+                  },
+                  "petsInvalid": {
+                    "value": {
+                      "message": "Pets must be greater than 0"
+                    }
+                  },
+                  "validationError": {
+                    "value": {
+                      "message": "Error validating data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al crear los usuarios y mascotas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mocks/generatePetsToBeAdopted": {
+      "post": {
+        "tags": ["Mocks"],
+        "summary": "Generar mascotas para adopción",
+        "description": "Crea mascotas mock sin dueño (disponibles para adopción) en la base de datos",
+        "operationId": "generatePetsToBeAdopted",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "numPets": {
+                    "type": "integer",
+                    "description": "Número de mascotas a generar (por defecto 10)",
+                    "minimum": 1,
+                    "default": 10,
+                    "example": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Mascotas creadas exitosamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pet"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al crear las mascotas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "required": ["name", "email", "role", "password"],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "ID único del usuario",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nombre del usuario",
+            "example": "Juan Pérez"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email único del usuario",
+            "example": "juan@example.com"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["user", "admin"],
+            "description": "Rol del usuario",
+            "example": "user",
+            "default": "user"
+          },
+          "pets": {
+            "type": "array",
+            "description": "Lista de IDs de mascotas del usuario",
+            "items": {
+              "type": "string"
+            },
+            "example": ["507f1f77bcf86cd799439012", "507f1f77bcf86cd799439013"],
+            "default": []
+          },
+          "password": {
+            "type": "string",
+            "description": "Contraseña hasheada del usuario",
+            "example": "$2b$10$hashedpassword"
+          },
+          "documents": {
+            "type": "array",
+            "description": "Lista de documentos del usuario",
+            "items": {
+              "$ref": "#/components/schemas/Document"
+            },
+            "default": []
+          },
+          "last_connection": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha de última conexión del usuario",
+            "example": "2024-01-01T00:00:00.000Z"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha de creación",
+            "example": "2024-01-01T00:00:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha de última actualización",
+            "example": "2024-01-01T00:00:00.000Z"
+          }
+        }
+      },
+      "Pet": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "ID único de la mascota",
+            "example": "507f1f77bcf86cd799439012"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nombre de la mascota",
+            "example": "Max"
+          },
+          "owner": {
+            "type": "string",
+            "nullable": true,
+            "description": "ID del usuario propietario. null si está disponible para adopción",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha de creación",
+            "example": "2024-01-01T00:00:00.000Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Fecha de última actualización",
+            "example": "2024-01-01T00:00:00.000Z"
+          }
+        }
+      },
+      "Document": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nombre del documento",
+            "example": "identificacion"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Ruta de referencia del archivo en el servidor",
+            "example": "uploads/1769636018368-files.jpg"
+          }
+        }
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "required": ["name", "email", "password"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nombre del usuario",
+            "example": "Juan Pérez"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email único del usuario",
+            "example": "juan@example.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "Contraseña del usuario (será hasheada)",
+            "example": "password123",
+            "minLength": 6
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email del usuario",
+            "example": "juan@example.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "Contraseña del usuario",
+            "example": "password123"
+          }
+        }
+      },
+      "Adoption": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "string",
+            "description": "Nombre del usuario que adoptó",
+            "example": "Juan Pérez"
+          },
+          "pet": {
+            "type": "array",
+            "description": "Lista de nombres de mascotas adoptadas por el usuario",
+            "items": {
+              "type": "string"
+            },
+            "example": ["Max", "Luna"]
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Mensaje de error",
+            "example": "Error retrieving data"
+          },
+          "status": {
+            "type": "integer",
+            "description": "Código de estado HTTP",
+            "example": 500
+          }
+        }
+      }
+    }
+  }
+}

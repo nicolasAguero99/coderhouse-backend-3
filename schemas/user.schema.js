@@ -20,6 +20,21 @@ export const USER_SCHEMA = new mongoose.Schema({
     type: String,
     required: true,
   },
+  documents: {
+    type: Array,
+    required: true,
+    default: [],
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  last_connection: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
 }, { timestamps: true });
 
 export const USER_MODEL = mongoose.model('User', USER_SCHEMA);

@@ -18,17 +18,17 @@ const createUsers = async (req, res, next) => {
   try {
     const { users, pets } = req.query;
     
-    if (users <= 0) {
-      throw createError(DICT_ERRORS_USERS.ERROR_USERS_MUST_BE_GREATER_THAN_0, 400);
-    }
-    if (pets <= 0) {
-      throw createError(DICT_ERRORS_USERS.ERROR_PETS_MUST_BE_GREATER_THAN_0, 400);
-    }
-    if (isNaN(users) || isNaN(pets)) {
-      throw createError(DICT_ERRORS_USERS.ERROR_VALIDATING_DATA, 400);
-    }
+    if (users === undefined || pets === undefined) throw createError(DICT_ERRORS_USERS.ERROR_VALIDATING_DATA, 400);
     
-    const createdUsers = await createUsersService(users, pets);
+    if (isNaN(users) || isNaN(pets)) throw createError(DICT_ERRORS_USERS.ERROR_VALIDATING_DATA, 400);
+    
+    const usersNum = Number(users);
+    const petsNum = Number(pets);
+    
+    if (usersNum <= 0) throw createError(DICT_ERRORS_USERS.ERROR_USERS_MUST_BE_GREATER_THAN_0, 400);
+    if (petsNum <= 0) throw createError(DICT_ERRORS_USERS.ERROR_PETS_MUST_BE_GREATER_THAN_0, 400);
+    
+    const createdUsers = await createUsersService(usersNum, petsNum);
     res.status(201).json(createdUsers);
   } catch (error) {
     if (error.status) {

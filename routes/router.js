@@ -1,18 +1,16 @@
 import { Router } from "express";
-import { LOGGER_TEST_BASE_URL, PETS_DB_BASE_URL, USERS_DB_BASE_URL } from "./routes.js";
-import { loggerTest } from "../controllers/logger.controller.js";
-import { getUsersDBController } from "../controllers/users.controller.js";
-import { getPetsDBController } from "../controllers/pets.controller.js";
+import usersRouter from "./users.router.js";
+import petsRouter from "./pets.router.js";
+import loggerRouter from "./logger.router.js";
+import adoptionRouter from "./adoption.router.js";
+import sessionsRouter from "./sessions.router.js";
 
 const router = Router();
 
-router.route(USERS_DB_BASE_URL)
-  .get(getUsersDBController)
-
-router.route(PETS_DB_BASE_URL)
-  .get(getPetsDBController)  
-
-router.route(LOGGER_TEST_BASE_URL)
-  .get(loggerTest);
+router.use(usersRouter);
+router.use(petsRouter);
+router.use(adoptionRouter);
+router.use(sessionsRouter);
+router.use(loggerRouter);
 
 export default router;
